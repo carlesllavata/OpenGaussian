@@ -68,6 +68,11 @@ class BugReportOperator(Operator):
     description = "Open the in-app bug report form"
 
     def execute(self, context) -> set:
+        from .opengaussian import ISSUES_URL, PORTAL_ENABLED  # OpenGaussian: report on our GitHub
+
+        if not PORTAL_ENABLED:
+            lf.ui.open_url(ISSUES_URL)
+            return {"FINISHED"}
         request_bug_report_open()
         lf.ui.set_panel_enabled("lfs.bug_report", True)
         return {"FINISHED"}

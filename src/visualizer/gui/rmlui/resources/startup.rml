@@ -9,8 +9,8 @@
     <div id="overlay-box">
       <img id="logo" />
       <span id="version-text" class="dim-text"></span>
-      <span id="supported-text" class="dim-text"></span>
-      <div id="sponsor-row">
+      <span id="supported-text" class="dim-text" style="display: none;"></span><!-- OpenGaussian: hidden -->
+      <div id="sponsor-row" style="display: none;"><!-- OpenGaussian: hidden -->
         <div id="link-core11" class="sponsor-link" data-url="https://www.core11.eu/">
           <img id="core11-logo" />
         </div>
@@ -18,7 +18,7 @@
           <img id="volinga-logo" />
         </div>
       </div>
-      <div id="social-row">
+      <div id="social-row" style="display: none;"><!-- OpenGaussian: hidden -->
         <div id="link-discord" class="social-link" data-url="https://discord.gg/NqwTqVYVmj">
           <img class="social-icon" src="../icon/discord.png" /><span id="discord-link"></span>
         </div>

@@ -302,6 +302,10 @@ def _build_builtin_panel_steps(lf):
     def portal_account():
         # Account session validation is a startup service, not panel UI. Keep
         # it eager so opening Account later sees the same initialized state.
+        from .opengaussian import PORTAL_ENABLED  # OpenGaussian: no accounts
+
+        if not PORTAL_ENABLED:
+            return
         from .portal_account import initialize_portal_account
 
         initialize_portal_account()

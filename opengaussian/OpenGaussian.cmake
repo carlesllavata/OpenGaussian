@@ -81,6 +81,22 @@ function(og_finalize)
         set_property(TARGET ${app} PROPERTY SOURCES ${sources})
     endif()
 
+    # nvImageCodec decodes JPEG on the GPU only if nvjpeg64_*.dll sits next to the exe. Upstream copies cudart and
+    # curand but not nvJPEG, so without a CUDA Toolkit on PATH decoding falls back to the CPU. NVIDIA's CUDA EULA
+    # lists nvjpeg.dll as redistributable (see tools/license_texts/NVIDIA-CUDA-Toolkit-redistribution.txt).
+    if(WIN32 AND CUDAToolkit_BIN_DIR)
+        file(GLOB og_nvjpeg_dlls "${CUDAToolkit_BIN_DIR}/nvjpeg64_*.dll" "${CUDAToolkit_BIN_DIR}/x64/nvjpeg64_*.dll")
+        if(og_nvjpeg_dlls)
+            add_custom_command(TARGET ${app} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${og_nvjpeg_dlls} "$<TARGET_FILE_DIR:${app}>"
+                COMMENT "Copying nvJPEG next to OpenGaussian.exe"
+                VERBATIM
+            )
+        else()
+            message(WARNING "OpenGaussian: nvjpeg64_*.dll not found in ${CUDAToolkit_BIN_DIR}; JPEG decoding will use the CPU")
+        endif()
+    endif()
+
     # Branded runtime resources: our logos over upstream's file names, and only the shipped languages with the
     # product name replaced. Runs after every upstream step that copies resources, on every build (it is cheap).
     # Lists are passed with "|" separators: a ";" would split the argument in a custom command.

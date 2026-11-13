@@ -100,9 +100,9 @@
         <select id="asset-filter-select" data-value="active_filter" aria-label="{{filter_menu_label}}">
           <option value="all">@tr:projects.filter.clear</option>
           <option value="local">@tr:projects.filter.local</option>
-          <option value="published">@tr:projects.filter.published</option>
-          <option value="not_published">@tr:projects.filter.not_published</option>
-          <option value="attention">@tr:projects.filter.attention</option>
+          <!-- OpenGaussian: no Gallery <option value="published">@tr:projects.filter.published</option> -->
+          <!-- OpenGaussian: no Gallery <option value="not_published">@tr:projects.filter.not_published</option> -->
+          <!-- OpenGaussian: no Gallery <option value="attention">@tr:projects.filter.attention</option> -->
           <option value="missing">@tr:projects.filter.missing</option>
           <option value="checkpoint">@tr:projects.filter.checkpoint</option>
           <option value="dataset">@tr:projects.filter.dataset</option>
@@ -276,7 +276,7 @@
                     <div class="inspector-band-column">
                       <div class="parameter-row"><span class="parameter-label">{{prop_size_label}}</span><span class="parameter-value" data-attr-title="selected_asset_size">{{selected_asset_size}}</span></div>
                       <div class="parameter-row" data-if="inspector_has_saves"><span class="parameter-label">{{inspector_saves_label}}</span><span class="parameter-value" data-attr-title="inspector_saves">{{inspector_saves}}</span></div>
-                      <div class="parameter-row"><span class="parameter-label">{{gallery_section_title}}</span><span class="parameter-value" data-attr-title="selected_gallery_tooltip">{{gallery_selected_state}}</span></div>
+                      <div class="parameter-row" style="display: none;"><!-- OpenGaussian: no Gallery --><span class="parameter-label">{{gallery_section_title}}</span><span class="parameter-value" data-attr-title="selected_gallery_tooltip">{{gallery_selected_state}}</span></div>
                       <div class="parameter-row inspector-gallery-detail-row"><span class="parameter-label">@tr:projects.gallery.details.title</span><span class="parameter-value">{{inspector_gallery_title}}</span></div>
                       <div class="parameter-row inspector-gallery-detail-row"><span class="parameter-label">@tr:projects.gallery.details.description</span><span class="parameter-value">{{inspector_gallery_description}}</span></div>
                       <button class="btn btn--secondary inspector-edit-details" data-if="inspector_can_edit_gallery_details" data-event-click="open_gallery_details">@tr:projects.gallery.details.edit</button>

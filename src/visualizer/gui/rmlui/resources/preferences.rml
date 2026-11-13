@@ -25,7 +25,7 @@
       <button class="btn preferences-nav-item" data-class-active="show_models" data-event-click="show_models">@tr:preferences.models.title</button>
       <button class="btn preferences-nav-item" data-class-active="show_marketplace" data-event-click="show_marketplace">@tr:preferences.marketplace</button>
       <button class="btn preferences-nav-item" data-class-active="show_mcp" data-event-click="show_mcp">@tr:preferences.mcp</button>
-      <button class="btn preferences-nav-item" data-class-active="show_portal" data-event-click="show_portal">@tr:preferences.portal</button>
+      <button class="btn preferences-nav-item" style="display: none;" data-class-active="show_portal" data-event-click="show_portal"><!-- OpenGaussian: no accounts -->@tr:preferences.portal</button>
     </div>
 
     <div class="preferences-main">
@@ -142,7 +142,7 @@
             <input type="checkbox" data-checked="project_manager_remember_state" />
           </div>
         </div>
-        <div class="section-header text-accent" data-class-is-expanded="gallery_expanded" data-event-click="toggle_section('gallery')">
+        <div class="section-header text-accent" style="display: none;" data-class-is-expanded="gallery_expanded" data-event-click="toggle_section('gallery')"><!-- OpenGaussian: no Gallery -->
           <span class="section-arrow text-accent" data-class-is-expanded="gallery_expanded">&#x25B6;</span>
           <span>@tr:preferences.gallery.title</span>
         </div>

@@ -448,6 +448,10 @@ class PortalAccountService:
 
     def start_device_flow(self, *, reauthorize: bool = False) -> bool:
         """Resume saved authorization before asking the browser for a new approval."""
+        from .opengaussian import PORTAL_ENABLED  # OpenGaussian: no accounts, never sign in
+
+        if not PORTAL_ENABLED:
+            return False
         with self._lock:
             if self._flow_thread is not None and self._flow_thread.is_alive():
                 return False

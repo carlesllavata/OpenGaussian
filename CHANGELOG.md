@@ -14,3 +14,7 @@ First version of OpenGaussian, based on LichtFeld Studio 0.5.5 in development (c
 - Settings, plugins, logs and caches are kept in `%USERPROFILE%\.opengaussian`, separate from an installed
   LichtFeld Studio.
 - The interface comes in English (default) and Spanish.
+- No accounts: the LichtFeld Portal account, the online Gallery (publishing, sync and transfers) and the
+  in-app bug report form are switched off. *Help > Report a bug* opens OpenGaussian's GitHub issues.
+- The start screen no longer shows LichtFeld Studio's community, donation and sponsor links.
+- JPEG photos are decoded on the GPU without having to install the CUDA Toolkit.

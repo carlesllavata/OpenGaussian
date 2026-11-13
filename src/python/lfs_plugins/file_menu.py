@@ -11,6 +11,7 @@ import uuid
 import lichtfeld as lf
 from .asset_index import display_name
 from .tools_menu import _open_gallery_scope, _open_projects_scope
+from .opengaussian import PORTAL_ENABLED  # OpenGaussian
 from .types import Operator
 from .layouts.menus import (
     menu_action,
@@ -956,7 +957,7 @@ class FileMenu:
                 menu_operator(ExportOperator, label=lf.ui.tr("menu.file.export_scene")),
                 menu_operator(ExportConfigOperator, label=lf.ui.tr("menu.file.configuration")),
             ]),
-            menu_submenu(
+            *([menu_submenu(  # OpenGaussian: the Gallery needs a portal account
                 lf.ui.tr("menu.tools.gallery"),
                 [
                     menu_action(lf.ui.tr("menu.file.open_gallery"), _open_gallery_scope),
@@ -967,7 +968,7 @@ class FileMenu:
                     ),
                     menu_action(lf.ui.tr("menu.tools.gallery_transfers"), _open_gallery_transfers),
                 ],
-            ),
+            )] if PORTAL_ENABLED else []),  # OpenGaussian
             menu_separator(),
             menu_submenu(
                 lf.ui.tr("menu.file.project_maintenance"),

@@ -77,6 +77,10 @@ def gallery_actions(entry, facts):
     Disabled records carry their visible explanation. File recovery precedes
     Gallery work; a transfer precedes the relationship it temporarily covers.
     """
+    from .opengaussian import PORTAL_ENABLED  # OpenGaussian: no Gallery actions without accounts
+
+    if not PORTAL_ENABLED:
+        return []
     entry = entry or {}
     actions = []
     from .portal_connection_ui import connection_action

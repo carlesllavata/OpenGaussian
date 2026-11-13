@@ -1136,3 +1136,6 @@
 .asset-shell.is-compact .asset-toolbar-quota { display: none; }
 .asset-shell.is-narrow .asset-update-all .asset-button-text,
 .asset-shell.is-compact .asset-update-all .asset-button-text { overflow: hidden; text-overflow: ellipsis; max-width: 90dp; }
+
+/* OpenGaussian: no online Gallery (the Open3D suite has no accounts) */
+.asset-col-gallery, .inspector-section-gallery, .inspector-gallery-detail-row, .gallery-completion { display: none; }
