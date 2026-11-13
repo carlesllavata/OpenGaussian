@@ -18,3 +18,5 @@ First version of OpenGaussian, based on LichtFeld Studio 0.5.5 in development (c
   in-app bug report form are switched off. *Help > Report a bug* opens OpenGaussian's GitHub issues.
 - The start screen no longer shows LichtFeld Studio's community, donation and sponsor links.
 - JPEG photos are decoded on the GPU without having to install the CUDA Toolkit.
+- Ships as a portable zip, `opengaussian-<version>-windows-x64.zip`, with the licences of every third-party
+  component in `THIRD-PARTY-LICENSES.md`.

@@ -51,6 +51,9 @@ Once released, OpenGaussian will be installed, updated and uninstalled with the
 `%LOCALAPPDATA%\Programs\Open3D\OpenGaussian` with Start-menu and desktop shortcuts. Your settings in
 `%USERPROFILE%\.opengaussian` are kept when you uninstall; delete that folder to remove them too.
 
+You can also download `opengaussian-<version>-windows-x64.zip` from the releases, unzip it anywhere and run
+`bin\OpenGaussian.exe`; keep the folders together, the program needs them. To uninstall, delete the folder.
+
 ## Build from source
 
 You need Visual Studio 2022 (17.10 or newer, with the C++ workload and the *C++ Clang Compiler for Windows*
@@ -67,7 +70,9 @@ cmake --build build
 
 `vcvars64.bat` sets `VCPKG_ROOT` to the copy of vcpkg bundled with Visual Studio, which is why it is set again
 afterwards. The first build compiles about 80 dependencies and takes a while. The program ends up in
-`build\OpenGaussian.exe`. Everything specific to OpenGaussian lives in [`opengaussian/`](../opengaussian); see
+`build\OpenGaussian.exe`. To make the release zip, run
+`powershell -ExecutionPolicy Bypass -File opengaussian\package.ps1 -BuildDir build -OutDir dist` on a committed
+tree. Everything specific to OpenGaussian lives in [`opengaussian/`](../opengaussian); see
 LichtFeld Studio's [build guide](../docs/building_and_distribution.md) for more options.
 
 ## License
