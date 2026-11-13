@@ -217,7 +217,7 @@ namespace lfs::vis::gui {
         SDL_WindowFlags flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY |
                                 SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_TRANSPARENT;
         flags |= SDL_WINDOW_VULKAN;
-        result->window = SDL_CreateWindow("LichtFeld Studio", rect.width, rect.height, flags);
+        result->window = SDL_CreateWindow(OG_PRODUCT_NAME /* OpenGaussian */,rect.width, rect.height, flags);
         if (!result->window)
             return {};
         SDL_SetFloatProperty(SDL_GetWindowProperties(result->window), "lfs.ui_scale", UserPreferences::instance().uiScale());

@@ -303,7 +303,7 @@ class PortalAccountService:
         default_credentials = (
             Path(resolved_data) / "account" / "credentials.json"
             if resolved_data
-            else Path.home() / ".lichtfeld" / "account" / "credentials.json"
+            else Path.home() / ".opengaussian" / "account" / "credentials.json"  # OpenGaussian
         )
         self.credentials_path = (
             Path(credentials_path).expanduser()

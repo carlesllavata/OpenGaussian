@@ -132,7 +132,7 @@ namespace lfs::core {
 
     lfs::Status migrateLegacySettings(const UserPaths& paths) {
         const auto home = homeDirectory();
-        if (!home || paths.configDir() != *home / ".lichtfeld" / "config")
+        if (!home || paths.configDir() != *home / OG_USER_DIR_NAME /* OpenGaussian */ / "config")
             return {};
 
         const auto marker = paths.dataDir() / "migrations" / "legacy-user-settings-v1.done";

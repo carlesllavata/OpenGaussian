@@ -515,7 +515,7 @@ namespace {
     }
 
     fs::path cached_model_path(const std::string_view filename) {
-        return home_directory() / ".lichtfeld" / "onnx" / std::string(filename);
+        return home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "onnx" / std::string(filename);
     }
 
     bool cached_weight_file_present(const fs::path& path) {

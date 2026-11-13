@@ -110,6 +110,7 @@ if(WIN32)
     enable_language(RC)
 endif()
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/WindowsVersionResource.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/opengaussian/OpenGaussian.cmake") # OpenGaussian branding layer
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/SelectFastLinker.cmake")
 

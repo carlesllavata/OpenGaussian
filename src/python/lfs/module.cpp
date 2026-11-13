@@ -3687,8 +3687,10 @@ NB_MODULE(lichtfeld, m) {
 #else
     build_info.attr("platform") = "Unknown";
 #endif
-    build_info.attr("repo_url") = "https://github.com/MrNeRF/LichtFeld-Studio";
-    build_info.attr("website_url") = "https://lichtfeld.io";
+    build_info.attr("repo_url") = OG_REPO_URL;              // OpenGaussian
+    build_info.attr("website_url") = OG_UPSTREAM_REPO_URL;  // OpenGaussian: shown as "Based on:"
+    build_info.attr("product_name") = OG_PRODUCT_NAME;      // OpenGaussian
+    build_info.attr("product_version") = OG_VERSION;        // OpenGaussian
     m.attr("PLUGIN_API_VERSION") = "1.0";
 
     lfs::python::register_commands(m);

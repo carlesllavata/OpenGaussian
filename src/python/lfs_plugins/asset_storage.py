@@ -26,7 +26,7 @@ def lichtfeld_home():
     storage = environment_value("LFS_RESOLVED_ASSET_LIBRARY_DIR")
     if storage:
         return Path(storage).expanduser().resolve().parent.parent
-    return Path.home() / ".lichtfeld"
+    return Path.home() / ".opengaussian"  # OpenGaussian
 
 
 def _preview_prefix(project_id):

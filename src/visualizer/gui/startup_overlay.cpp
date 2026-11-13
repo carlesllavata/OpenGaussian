@@ -363,7 +363,7 @@ namespace lfs::vis::gui {
         };
 
         if (auto* version = document_->GetElementById("version-text"))
-            version->SetInnerRML(GIT_TAGGED_VERSION);
+            version->SetInnerRML("v" OG_VERSION); // OpenGaussian
         set_text("supported-text", lichtfeld::Strings::Startup::SUPPORTED_BY);
         set_text("lang-label", lichtfeld::Strings::Preferences::LANGUAGE);
         set_text("discord-link", lichtfeld::Strings::Startup::DISCORD);

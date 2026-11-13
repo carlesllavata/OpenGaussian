@@ -39,14 +39,14 @@ namespace lfs::core {
         fs::path breadcrumb_path() {
             const auto paths = UserPaths::resolve();
             return (paths ? paths->logDir()
-                          : lichtfeld_home_directory() / ".lichtfeld" / "logs") /
+                          : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
                    "last_session.json";
         }
 
         fs::path snapshot_path() {
             const auto paths = UserPaths::resolve();
             return (paths ? paths->logDir()
-                          : lichtfeld_home_directory() / ".lichtfeld" / "logs") /
+                          : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
                    "previous_session.log";
         }
 
@@ -149,7 +149,7 @@ namespace lfs::core {
             const auto paths = UserPaths::resolve();
             const auto live_log_path =
                 (paths ? paths->logDir()
-                       : lichtfeld_home_directory() / ".lichtfeld" / "logs") /
+                       : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
                 "lichtfeld.log";
             current_record = SessionBreadcrumb{
                 .pid = process_id(),

@@ -142,7 +142,7 @@ class SettingsManager:
         self._settings_dir = Path(
             os.environ.get(
                 "LFS_RESOLVED_PLUGIN_DIR",
-                Path.home() / ".lichtfeld" / "plugins",
+                Path.home() / ".opengaussian" / "plugins",  # OpenGaussian
             )
         )
         self._cache: Dict[str, PluginSettings] = {}

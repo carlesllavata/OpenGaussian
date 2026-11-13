@@ -162,7 +162,7 @@ def create_plugin(name: str, target_dir: Optional[Path] = None) -> Path:
         target_dir = Path(
             os.environ.get(
                 "LFS_RESOLVED_PLUGIN_DIR",
-                Path.home() / ".lichtfeld" / "plugins",
+                Path.home() / ".opengaussian" / "plugins",  # OpenGaussian
             )
         )
 

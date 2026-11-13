@@ -82,7 +82,7 @@ class RegistryClient:
         self._cache_dir = cache_dir or (
             Path(resolved_cache) / "registry"
             if resolved_cache
-            else Path.home() / ".lichtfeld" / "cache" / "registry"
+            else Path.home() / ".opengaussian" / "cache" / "registry"  # OpenGaussian
         )
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._index: Optional[Dict] = None

@@ -349,7 +349,7 @@ namespace lfs::core {
                     lfs::ErrorCode::InvalidArgument,
                     "Portable user storage requires an executable directory.",
                     "UserPathOptions.portable was set without executable_dir");
-            return fromUnifiedRoot(*options.executable_dir / ".lichtfeld");
+            return fromUnifiedRoot(*options.executable_dir / OG_USER_DIR_NAME /* OpenGaussian */);
         }
 
         const auto home = userHomeDirectory();
@@ -359,7 +359,7 @@ namespace lfs::core {
                 "The current user's home directory is unavailable.",
                 "Neither the platform home variable nor a user-path override is available");
 
-        return fromUnifiedRoot(*home / ".lichtfeld");
+        return fromUnifiedRoot(*home / OG_USER_DIR_NAME /* OpenGaussian */);
     }
 
     lfs::Status UserPaths::ensureDirectories() const {

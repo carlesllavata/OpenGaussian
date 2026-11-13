@@ -23,7 +23,7 @@ class AboutPanel(Panel):
 
         model.bind_func("panel_label", lambda: "@tr:about.title")
 
-        model.bind_func("version", lambda: bi.version)
+        model.bind_func("version", lambda: f"{bi.product_version} (LichtFeld Studio {bi.version})")  # OpenGaussian
         model.bind_func("commit", lambda: bi.commit)
         model.bind_func("build_type", lambda: bi.build_type)
         model.bind_func("platform", lambda: bi.platform)

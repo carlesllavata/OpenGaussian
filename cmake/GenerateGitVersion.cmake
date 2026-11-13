@@ -19,12 +19,13 @@ execute_process(
     ERROR_QUIET
 )
 execute_process(
-    COMMAND git describe --tags --dirty --always --match "v*"
+    COMMAND git describe --tags --dirty --always --match "upstream/v*" # OpenGaussian: upstream tags live under upstream/
     WORKING_DIRECTORY "${GIT_SRC_DIR}"
     OUTPUT_VARIABLE GIT_TAGGED_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET
 )
+string(REGEX REPLACE "^upstream/" "" GIT_TAGGED_VERSION "${GIT_TAGGED_VERSION}") # OpenGaussian
 
 if(NOT GIT_COMMIT_HASH_SHORT AND DEFINED ENV{GITHUB_SHA} AND NOT "$ENV{GITHUB_SHA}" STREQUAL "")
     string(SUBSTRING "$ENV{GITHUB_SHA}" 0 7 GIT_COMMIT_HASH_SHORT)

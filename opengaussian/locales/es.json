@@ -1,0 +1,13 @@
+{
+  "_comment": "OpenGaussian overrides for upstream's es.json, applied after 'LichtFeld Studio' is replaced with 'OpenGaussian'. 'keep' restores upstream's text (it is about upstream itself); 'set' writes our own.",
+  "keep": [
+    ["getting_started", "video_release_054"],
+    ["getting_started", "video_overview"]
+  ],
+  "set": [
+    {"path": ["about", "title"], "value": "OPENGAUSSIAN"},
+    {"path": ["about", "description"], "value": "Entrenamiento, visualización y edición de 3D Gaussian Splatting, parte de la suite Open3D. Basado en LichtFeld Studio, una implementación de alto rendimiento en C++ y CUDA del 3D Gaussian Splatting."},
+    {"path": ["about", "website"], "value": "Basado en:"},
+    {"path": ["about", "authors"], "value": "Autores de LichtFeld Studio y colaboradores de OpenGaussian"}
+  ]
+}

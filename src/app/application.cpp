@@ -1583,8 +1583,8 @@ namespace lfs::app {
             }
 
             const std::string window_title = safe_mode
-                                                 ? "LichtFeld Studio (Safe Mode)"
-                                                 : "LichtFeld Studio";
+                                                 ? OG_PRODUCT_NAME " (Safe Mode)" // OpenGaussian
+                                                 : OG_PRODUCT_NAME;
 
             if (!params->python_scripts.empty()) {
                 vis::gui::panels::PythonScriptManagerState::getInstance().setScripts(params->python_scripts);

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
+  <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+  <!-- OpenGaussian logo: one tilted splat (an anisotropic gaussian) drawn as its contour levels. -->
+  <g transform="rotate(-35 50 50)">
+    <ellipse cx="50" cy="50" rx="45" ry="27" fill="none" stroke="#5b3fd6" stroke-width="6.2"/>
+    <ellipse cx="50" cy="50" rx="29" ry="16.5" fill="#8f73ff" fill-opacity="0.55"/>
+    <ellipse cx="50" cy="50" rx="13.5" ry="7.8" fill="#6d4aff"/>
+  </g>
+</svg>

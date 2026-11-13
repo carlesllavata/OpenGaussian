@@ -320,7 +320,7 @@ def _legacy_storage_paths(native_storage: Optional[Path] = None) -> List[Path]:
     paths: List[Path] = []
     if native_storage is not None:
         paths.append(native_storage.parent.parent / "asset_manager")
-    paths.append(Path.home() / ".lichtfeld" / "asset_manager")
+    paths.append(Path.home() / ".opengaussian" / "asset_manager")  # OpenGaussian
     for variable in ("APPDATA", "LOCALAPPDATA"):
         base = environment_value(variable)
         if base:

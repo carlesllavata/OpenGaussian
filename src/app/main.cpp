@@ -144,7 +144,7 @@ namespace {
             if constexpr (std::is_same_v<T, lfs::core::args::HelpMode>) {
                 return 0;
             } else if constexpr (std::is_same_v<T, lfs::core::args::VersionMode>) {
-                std::println("LichtFeld Studio {} ({})", GIT_TAGGED_VERSION, GIT_COMMIT_HASH_SHORT);
+                std::println(OG_PRODUCT_NAME " " OG_VERSION " (based on " OG_UPSTREAM_NAME " {}, {})", GIT_TAGGED_VERSION, GIT_COMMIT_HASH_SHORT); // OpenGaussian
                 return 0;
             } else if constexpr (std::is_same_v<T, lfs::core::args::WarmupMode>) {
                 applyCudaContextTuning();
