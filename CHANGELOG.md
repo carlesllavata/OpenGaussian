@@ -3,7 +3,7 @@
 All notable changes to OpenGaussian, newest first. OpenGaussian is LichtFeld Studio under another name, part of
 the Open3D suite; changes that come from LichtFeld Studio are summarised per merge.
 
-## In development
+## 0.1.0 – 2026-11-13
 
 First version of OpenGaussian, based on LichtFeld Studio 0.5.5 in development (commit `9b6dce25b`).
 

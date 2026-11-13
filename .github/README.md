@@ -14,7 +14,8 @@ OpenGaussian is [LichtFeld Studio](https://github.com/MrNeRF/LichtFeld-Studio) u
 shipped for free as part of the Open3D suite. It keeps LichtFeld Studio's features and follows its development
 closely; the differences are listed below.
 
-> **Status:** in development. Version 0.1.0 has not been released yet.
+> **Status:** early development (0.x). The current version is **0.1.0**, based on LichtFeld Studio 0.5.5 in
+> development.
 
 ## What it does
 
@@ -43,16 +44,20 @@ closely; the differences are listed below.
 - An NVIDIA GPU with compute capability 7.5 or newer (GTX 16 series, RTX 20 series and later). AMD, Intel and
   GTX 10 series or older GPUs are not supported.
 - NVIDIA driver 570 or newer.
+- About 700 MB of disk space, plus room for your projects.
+
+The first start on a computer takes longer than the next ones: the GPU code is compiled for your graphics card
+and kept for later.
 
 ## Install and uninstall
 
-Once released, OpenGaussian will be installed, updated and uninstalled with the
-[Open3D launcher](https://github.com/carlesllavata/Open3D), which puts it in
-`%LOCALAPPDATA%\Programs\Open3D\OpenGaussian` with Start-menu and desktop shortcuts. Your settings in
-`%USERPROFILE%\.opengaussian` are kept when you uninstall; delete that folder to remove them too.
+Download `opengaussian-<version>-windows-x64.zip` from the
+[releases](https://github.com/carlesllavata/OpenGaussian/releases), unzip it anywhere and run
+`bin\OpenGaussian.exe`. Keep the folders together: the program needs them. To uninstall, delete the folder.
+Your settings in `%USERPROFILE%\.opengaussian` are kept; delete that folder to remove them too.
 
-You can also download `opengaussian-<version>-windows-x64.zip` from the releases, unzip it anywhere and run
-`bin\OpenGaussian.exe`; keep the folders together, the program needs them. To uninstall, delete the folder.
+The [Open3D launcher](https://github.com/carlesllavata/Open3D) will install, update and uninstall OpenGaussian
+once it lists it; it is not in the launcher yet.
 
 ## Build from source
 
