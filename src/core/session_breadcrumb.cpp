@@ -9,6 +9,7 @@
 #include "core/path_utils.hpp"
 #include "core/user_paths.hpp"
 #include "core/utc_time.hpp"
+#include "opengaussian/user_folder.hpp" // OpenGaussian
 
 #include <nlohmann/json.hpp>
 
@@ -39,14 +40,14 @@ namespace lfs::core {
         fs::path breadcrumb_path() {
             const auto paths = UserPaths::resolve();
             return (paths ? paths->logDir()
-                          : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
+                          : opengaussian::userFolder(lichtfeld_home_directory() / OG_USER_DIR_NAME) /* OpenGaussian */ / "logs") /
                    "last_session.json";
         }
 
         fs::path snapshot_path() {
             const auto paths = UserPaths::resolve();
             return (paths ? paths->logDir()
-                          : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
+                          : opengaussian::userFolder(lichtfeld_home_directory() / OG_USER_DIR_NAME) /* OpenGaussian */ / "logs") /
                    "previous_session.log";
         }
 
@@ -149,7 +150,7 @@ namespace lfs::core {
             const auto paths = UserPaths::resolve();
             const auto live_log_path =
                 (paths ? paths->logDir()
-                       : lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs") /
+                       : opengaussian::userFolder(lichtfeld_home_directory() / OG_USER_DIR_NAME) /* OpenGaussian */ / "logs") /
                 "lichtfeld.log";
             current_record = SessionBreadcrumb{
                 .pid = process_id(),

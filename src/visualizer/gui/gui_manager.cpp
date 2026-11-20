@@ -26,6 +26,7 @@
 #include "gui/volume_guide_visibility.hpp"
 #include "gui/vram_hud_sample_policy.hpp"
 #include "opengaussian/shared_language.hpp" // OpenGaussian
+#include "opengaussian/user_folder.hpp"     // OpenGaussian
 #include "preferences.hpp"
 #include "window/vulkan_result.hpp"
 #include <ft2build.h>
@@ -4566,6 +4567,7 @@ namespace lfs::vis::gui {
                 .message = LOC("preferences.legacy_settings_conflict_message"),
                 .level = ErrorNoticeLevel::Warning,
             });
+        opengaussian::tellUserFolder(); // OpenGaussian: what carrying the old folder over came to
 
         float saved_scale = lfs::vis::loadUiScalePreference();
         if (saved_scale <= 0.0f)

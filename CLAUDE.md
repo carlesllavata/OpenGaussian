@@ -17,6 +17,9 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
 - `opengaussian/shared_language.cpp`: the language every Open3D app shares, read and written with
   `opengaussian/open3d_settings.h` and `.cpp`, copies of common files of the suite in their own style, the
   same in every repo that has them (LF by `opengaussian/.gitattributes`). Do not change them here.
+- `opengaussian/user_folder.hpp` and `.cpp`: the folder OpenGaussian keeps everything in, and carrying the old
+  one over; built into `lfs_logger`, with its own copy of `open3d_settings.cpp`. `user_folder_notice.cpp`, in the
+  visualizer, says what the copy came to. `test_user_folder.cpp` tests them alone (its first lines say how).
 - `.github/README.md` (the one GitHub shows) and `CHANGELOG.md` are ours. The rest is upstream's, with
   small edits marked "OpenGaussian": `git grep -n OpenGaussian -- CMakeLists.txt cmake src` lists them.
 
@@ -26,7 +29,8 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
   `cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_PORTABLE=ON -DBUILD_PYTHON_STUBS=OFF`
   `-DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake`, then `cmake --build build`.
 - There is no check command of our own, and no tests are built: upstream's are in `tests/` and need
-  `-DBUILD_TESTS=ON`, which `BUILD_PORTABLE` forces off. The only checks are the packager's.
+  `-DBUILD_TESTS=ON`, which `BUILD_PORTABLE` forces off. The only checks are the packager's and
+  `opengaussian/test_user_folder.cpp`, built by hand with `cl`.
 - `.github/workflows` is upstream's: every job that starts by itself is limited to upstream's repository.
 
 ## Version and release
@@ -59,6 +63,14 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
   there is no preference, and closing the screen (which also happens by itself when a dialog opens) writes
   nothing. That picker and Edit > Preferences > General > Language write the file and change at once; a
   write that fails is said in a toast.
+- Everything OpenGaussian writes goes in one folder, `%LOCALAPPDATA%\Open3D\OpenGaussian` (or `OpenGaussian` in
+  the folder `OPEN3D_DATA_DIR` names), laid out as upstream lays out its home; `LFS_HOME` still names another and
+  wins. `opengaussian::userFolder` gives it wherever upstream builds `%USERPROFILE%\.opengaussian`
+  (`UserPaths::resolve`, the logger, the session breadcrumb, preprocessing's `onnx`). Its first call, at start
+  before anything is written, copies that old folder in once and leaves it as it was, without `venv`, each
+  plugin's `.venv`, `cache` and `onnx` (`kSkipped`), which are made again. If the copy fails, that run uses the
+  old folder and the next start tries again; `tellUserFolder` (from `gui_manager.cpp`) logs what happened and
+  says a failure in a toast. Upstream's import of `%APPDATA%\LichtFeldStudio` runs only in the folder chosen.
 - Accounts, the online Gallery and the portal bug report are off through `PORTAL_ENABLED = False` (our
   switches); their code stays in the tree, and their interface parts are hidden in the `.rml` files.
 
@@ -70,5 +82,10 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
   `tagopt = --no-tags` on both remotes); `cmake/GenerateGitVersion.cmake` reads upstream's version from
   `upstream/v*`. `git push --tags` would publish them: our remote holds only our own `vX.Y.Z` tags.
 - Upstream writes its user folder (`.lichtfeld`) and window titles as literals, replaced here one by one
-  (`OG_USER_DIR_NAME`, `".opengaussian"`): a merge can bring new ones; `src/python/runner.cpp` has one left.
+  (`OG_USER_DIR_NAME` inside `opengaussian::userFolder`, `".opengaussian"`): a merge can bring new ones;
+  `src/python/runner.cpp` has one left. The Python ones are fallbacks: the program hands its folders to Python
+  (`LFS_RESOLVED_*`); `asset_index.py` also looks there for an older Asset Manager catalogue, which the copy
+  has brought over. Upstream's tests that compile `user_paths.cpp` would now need `user_folder.cpp`.
+- Two caches of upstream's are outside the folder: `%LOCALAPPDATA%\LichtFeld\ply_sequence_cache`
+  (`sequencer_ui_manager.cpp`) and `%USERPROFILE%\.cache\lichtfeld-studio` (`getting_started_panel.py`).
 - Upstream's `build_lichtfeld.ps1` clones or updates vcpkg in the folder above the repo.

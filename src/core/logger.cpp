@@ -7,6 +7,7 @@
 #include "core/native_fs.hpp"
 #include "core/path_utils.hpp"
 #include "diagnostics/vram_profiler.hpp"
+#include "opengaussian/user_folder.hpp" // OpenGaussian
 #include <algorithm>
 #include <array>
 #include <cstdio>
@@ -520,7 +521,7 @@ namespace lfs::core {
         fs::path resolve_default_log_directory(const std::string& user_dir_override) {
             if (!user_dir_override.empty())
                 return utf8_to_path(user_dir_override) / "logs";
-            return lichtfeld_home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "logs";
+            return opengaussian::userFolder(lichtfeld_home_directory() / OG_USER_DIR_NAME) /* OpenGaussian */ / "logs";
         }
 
         fs::path resolve_default_log_path(const std::string& user_dir_override) {

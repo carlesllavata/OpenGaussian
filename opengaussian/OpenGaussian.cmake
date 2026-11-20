@@ -4,9 +4,9 @@
 #
 # Included once from the top-level CMakeLists.txt, right after WindowsVersionResource.cmake and before any
 # target exists. It defines the product constants, replaces the Windows version resource with an OpenGaussian
-# one, and defers the rest (executable name, icon, the shared language, branded runtime resources) to the end of
-# the configure step, when every upstream target exists. Keeping all of this here keeps the diff against upstream
-# small.
+# one, and defers the rest (executable name, icon, the shared language, the user folder, branded runtime
+# resources) to the end of the configure step, when every upstream target exists. Keeping all of this here keeps
+# the diff against upstream small.
 
 include_guard(GLOBAL)
 
@@ -81,8 +81,20 @@ function(og_finalize)
     if(NOT TARGET lfs_visualizer)
         message(FATAL_ERROR "OpenGaussian: target 'lfs_visualizer' not found")
     endif()
-    target_sources(lfs_visualizer PRIVATE "${OG_DIR}/open3d_settings.cpp" "${OG_DIR}/shared_language.cpp")
+    target_sources(lfs_visualizer PRIVATE "${OG_DIR}/open3d_settings.cpp" "${OG_DIR}/shared_language.cpp"
+                                          "${OG_DIR}/user_folder_notice.cpp")
     target_include_directories(lfs_visualizer PRIVATE "${CMAKE_SOURCE_DIR}")
+
+    # The folder OpenGaussian keeps everything in, %LOCALAPPDATA%\Open3D\OpenGaussian, with the old one carried over
+    # (user_folder.hpp). It builds into the logger, the lowest library whose code builds that folder, with its own
+    # copy of open3d_settings.cpp; lfs_core and lfs_preprocessing include it too.
+    foreach(og_target lfs_logger lfs_core lfs_preprocessing)
+        if(NOT TARGET ${og_target})
+            message(FATAL_ERROR "OpenGaussian: target '${og_target}' not found")
+        endif()
+        target_include_directories(${og_target} PRIVATE "${CMAKE_SOURCE_DIR}")
+    endforeach()
+    target_sources(lfs_logger PRIVATE "${OG_DIR}/open3d_settings.cpp" "${OG_DIR}/user_folder.cpp")
 
     if(WIN32)
         # Swap upstream's icon resource for ours.

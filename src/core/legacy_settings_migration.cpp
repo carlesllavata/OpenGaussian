@@ -9,6 +9,7 @@
 #include "core/path_utils.hpp"
 #include "core/persisted_settings.hpp"
 #include "core/user_paths.hpp"
+#include "opengaussian/user_folder.hpp" // OpenGaussian
 
 #include <atomic>
 #include <cmath>
@@ -132,7 +133,7 @@ namespace lfs::core {
 
     lfs::Status migrateLegacySettings(const UserPaths& paths) {
         const auto home = homeDirectory();
-        if (!home || paths.configDir() != *home / OG_USER_DIR_NAME /* OpenGaussian */ / "config")
+        if (!home || !opengaussian::isUserFolder(paths.rootDir()) /* OpenGaussian: Open3D's, or the old on a failed copy */)
             return {};
 
         const auto marker = paths.dataDir() / "migrations" / "legacy-user-settings-v1.done";

@@ -13,6 +13,13 @@ the Open3D suite; changes that come from LichtFeld Studio are summarised per mer
   Windows in Spanish, choose English once more.
 - The start screen offers a language only while none is chosen for the Open3D apps. Closing it no longer
   counts as choosing the language shown.
+- OpenGaussian's files move to the Open3D folder, `%LOCALAPPDATA%\Open3D\OpenGaussian`, with the other Open3D
+  apps. The first time the new version starts it copies what it finds in the old folder,
+  `%USERPROFILE%\.opengaussian`, so nothing has to be set up again: your preferences, layout, shortcuts,
+  plugins, presets, projects, logs and recovery files are all there (that first start takes longer when the
+  old folder holds large projects). The Python environments and the caches are not copied; they are made
+  again when needed, and models are downloaded again when a tool needs them. The old folder is left as it
+  was. If you set `LFS_HOME`, that folder is still used and nothing is copied.
 
 ## 0.1.0 – 2026-11-13
 

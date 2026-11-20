@@ -6,6 +6,7 @@
 #include "core/native_fs.hpp"
 
 #include "core/environment.hpp"
+#include "opengaussian/user_folder.hpp" // OpenGaussian
 #include "path_utils.hpp"
 
 #include <nlohmann/json.hpp>
@@ -359,7 +360,7 @@ namespace lfs::core {
                 "The current user's home directory is unavailable.",
                 "Neither the platform home variable nor a user-path override is available");
 
-        return fromUnifiedRoot(*home / OG_USER_DIR_NAME /* OpenGaussian */);
+        return fromUnifiedRoot(opengaussian::userFolder(*home / OG_USER_DIR_NAME) /* OpenGaussian: Open3D's */);
     }
 
     lfs::Status UserPaths::ensureDirectories() const {

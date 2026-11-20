@@ -19,6 +19,7 @@
 
 #include "io/atomic_output.hpp"
 #include "io/loader.hpp"
+#include "opengaussian/user_folder.hpp" // OpenGaussian
 #include <cuda_runtime.h>
 
 #include "indicators.hpp"
@@ -515,7 +516,7 @@ namespace {
     }
 
     fs::path cached_model_path(const std::string_view filename) {
-        return home_directory() / OG_USER_DIR_NAME /* OpenGaussian */ / "onnx" / std::string(filename);
+        return opengaussian::userFolder(home_directory() / OG_USER_DIR_NAME) /* OpenGaussian */ / "onnx" / std::string(filename);
     }
 
     bool cached_weight_file_present(const fs::path& path) {
