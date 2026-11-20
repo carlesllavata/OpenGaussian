@@ -4,8 +4,9 @@
 #
 # Included once from the top-level CMakeLists.txt, right after WindowsVersionResource.cmake and before any
 # target exists. It defines the product constants, replaces the Windows version resource with an OpenGaussian
-# one, and defers the rest (executable name, icon, branded runtime resources) to the end of the configure
-# step, when every upstream target exists. Keeping all of this here keeps the diff against upstream small.
+# one, and defers the rest (executable name, icon, the shared language, branded runtime resources) to the end of
+# the configure step, when every upstream target exists. Keeping all of this here keeps the diff against upstream
+# small.
 
 include_guard(GLOBAL)
 
@@ -73,6 +74,15 @@ function(og_finalize)
     endif()
 
     set_target_properties(${app} PROPERTIES OUTPUT_NAME "${OG_EXE_NAME}")
+
+    # The language every Open3D app shares: open3d_settings.h and .cpp (copies of common files of the Open3D
+    # suite, in their own style) and shared_language.cpp, through which upstream's language preference
+    # (src/visualizer/preferences.cpp) reads and writes it. They build into the visualizer, which calls them.
+    if(NOT TARGET lfs_visualizer)
+        message(FATAL_ERROR "OpenGaussian: target 'lfs_visualizer' not found")
+    endif()
+    target_sources(lfs_visualizer PRIVATE "${OG_DIR}/open3d_settings.cpp" "${OG_DIR}/shared_language.cpp")
+    target_include_directories(lfs_visualizer PRIVATE "${CMAKE_SOURCE_DIR}")
 
     if(WIN32)
         # Swap upstream's icon resource for ours.

@@ -8,6 +8,7 @@
     {"path": ["about", "title"], "value": "OPENGAUSSIAN"},
     {"path": ["about", "description"], "value": "3D Gaussian Splatting training, viewing and editing, part of the Open3D suite. Based on LichtFeld Studio, a high-performance C++ and CUDA implementation of 3D Gaussian Splatting."},
     {"path": ["about", "website"], "value": "Based on:"},
-    {"path": ["about", "authors"], "value": "LichtFeld Studio Authors and OpenGaussian contributors"}
+    {"path": ["about", "authors"], "value": "LichtFeld Studio Authors and OpenGaussian contributors"},
+    {"path": ["opengaussian.language_not_shared"], "value": "The language could not be saved for the other Open3D apps: {}"}
   ]
 }

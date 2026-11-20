@@ -25,6 +25,7 @@
 #include "gui/viewport_gizmo_geometry.hpp"
 #include "gui/volume_guide_visibility.hpp"
 #include "gui/vram_hud_sample_policy.hpp"
+#include "opengaussian/shared_language.hpp" // OpenGaussian
 #include "preferences.hpp"
 #include "window/vulkan_result.hpp"
 #include <ft2build.h>
@@ -4543,7 +4544,7 @@ namespace lfs::vis::gui {
             LOG_WARN("Failed to initialize localization system, using default strings");
         } else {
             if (!viewer_->options_.safe_mode) {
-                const std::string saved_language = lfs::vis::loadLanguagePreference();
+                const std::string saved_language = opengaussian::takeStartLanguage(); // OpenGaussian: shared, or Windows'
                 if (!saved_language.empty() && !loc.setLanguage(saved_language)) {
                     LOG_WARN("Saved language preference '{}' is unavailable; using {}",
                              saved_language,

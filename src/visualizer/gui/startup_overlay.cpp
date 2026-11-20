@@ -210,11 +210,8 @@ namespace lfs::vis::gui {
     void StartupOverlay::dismiss() {
         if (!visible_)
             return;
-        if (lfs::vis::loadLanguagePreference().empty()) {
-            const auto& language = lfs::event::LocalizationManager::getInstance().getCurrentLanguage();
-            if (!language.empty())
-                lfs::vis::saveLanguagePreference(language);
-        }
+        // OpenGaussian: closing the start screen (also done by itself, when a dialog opens) is not a choice of
+        // language, so the language every Open3D app shares is not written (opengaussian/shared_language.hpp).
         visible_ = false;
         if (rml_manager_ && rml_context_)
             rml_manager_->deactivateInput(rml_context_);

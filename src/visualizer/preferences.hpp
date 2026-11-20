@@ -78,6 +78,10 @@ namespace lfs::vis {
         void setLanguage(const std::string& value);
         [[nodiscard]] std::string language();
         void clearLanguage();
+        // OpenGaussian: the language saved here is settled, handed to the one every Open3D app shares or
+        // with nothing to hand over (opengaussian/shared_language.hpp).
+        void setLanguageShared();
+        [[nodiscard]] bool languageShared();
 
         void setNewProjectNavigation(std::string_view axis, bool align_grid);
         [[nodiscard]] std::string newProjectNavigationUpAxis();

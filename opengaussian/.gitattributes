@@ -1,0 +1,4 @@
+# The copies of common files of the Open3D suite stay byte for byte as their originals, with LF line
+# endings, whatever core.autocrlf says: the suite's sync.py compares them.
+open3d_settings.h text eol=lf
+open3d_settings.cpp text eol=lf

@@ -5,6 +5,7 @@
 #include "core/native_fs.hpp"
 #include "input/gamepad_navigation.hpp"
 #include "input/gamepad_profiles.hpp"
+#include "opengaussian/shared_language.hpp" // OpenGaussian
 #include "rendering/rendering_types.hpp"
 #include "visualizer/navigation_up_axis.hpp"
 
@@ -1117,6 +1118,18 @@ namespace lfs::vis {
         impl_->values.erase("language");
         impl_->saveLocked();
     }
+    // OpenGaussian: opengaussian/shared_language.cpp.
+    void UserPreferences::setLanguageShared() {
+        std::scoped_lock lock(impl_->mutex);
+        impl_->loadLocked();
+        impl_->values["language_shared"] = true;
+        impl_->saveLocked();
+    }
+    bool UserPreferences::languageShared() {
+        std::scoped_lock lock(impl_->mutex);
+        impl_->loadLocked();
+        return lfs::core::persisted_settings::field<bool>(impl_->values, "language_shared", false);
+    }
     void UserPreferences::setNewProjectNavigation(const std::string_view axis, const bool align_grid) {
         if (!navigationUpAxisFromName(axis))
             throw std::invalid_argument("navigation up axis must be legacy_y or data_z");
@@ -1551,8 +1564,9 @@ namespace lfs::vis {
         return std::string(defaultSceneUpscalerPreset(backend).id);
     }
 
-    void saveLanguagePreference(const std::string& value) { UserPreferences::instance().setLanguage(value); }
-    std::string loadLanguagePreference() { return UserPreferences::instance().language(); }
+    // OpenGaussian: the language is the one every Open3D app shares (opengaussian/shared_language.hpp).
+    void saveLanguagePreference(const std::string& value) { opengaussian::shareLanguage(value); }
+    std::string loadLanguagePreference() { return opengaussian::sharedLanguage(); }
     void clearLanguagePreference() { UserPreferences::instance().clearLanguage(); }
     void saveCameraNavigationPreference(const std::string& value) { UserPreferences::instance().setCameraNavigation(value); }
     std::string loadCameraNavigationPreference() { return UserPreferences::instance().cameraNavigation(); }

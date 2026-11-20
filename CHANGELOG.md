@@ -3,6 +3,17 @@
 All notable changes to OpenGaussian, newest first. OpenGaussian is LichtFeld Studio under another name, part of
 the Open3D suite; changes that come from LichtFeld Studio are summarised per merge.
 
+## In development
+
+- The language is the one the Open3D launcher and the other Open3D apps use. Choosing English or Español on
+  the start screen or in *Edit > Preferences > General > Language* changes it for them too, the next time
+  they start; a language chosen in one of them shows here the next time OpenGaussian starts.
+- If no language was chosen, OpenGaussian follows Windows: Spanish if Windows is in Spanish, English
+  otherwise. Before, it started in English. A Spanish you had chosen stays; if you had chosen English on a
+  Windows in Spanish, choose English once more.
+- The start screen offers a language only while none is chosen for the Open3D apps. Closing it no longer
+  counts as choosing the language shown.
+
 ## 0.1.0 – 2026-11-13
 
 First version of OpenGaussian, based on LichtFeld Studio 0.5.5 in development (commit `9b6dce25b`).

@@ -14,6 +14,9 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
 - `opengaussian/ApplyBranding.cmake`: our logos over upstream's file names, and only the languages of
   `OG_LOCALES`, with the product's name replaced and the overrides of `opengaussian/locales/`.
 - `opengaussian/package.ps1`: the packager. `src/python/lfs_plugins/opengaussian.py`: our switches.
+- `opengaussian/shared_language.cpp`: the language every Open3D app shares, read and written with
+  `opengaussian/open3d_settings.h` and `.cpp`, copies of common files of the suite in their own style, the
+  same in every repo that has them (LF by `opengaussian/.gitattributes`). Do not change them here.
 - `.github/README.md` (the one GitHub shows) and `CHANGELOG.md` are ours. The rest is upstream's, with
   small edits marked "OpenGaussian": `git grep -n OpenGaussian -- CMakeLists.txt cmake src` lists them.
 
@@ -30,8 +33,8 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
 
 - The version is `OG_VERSION` in `opengaussian/OpenGaussian.cmake`. It is written again by hand in
   `.github/README.md` and `CHANGELOG.md`; nothing checks that they agree.
-- `CHANGELOG.md` has a section per version, headed `## X.Y.Z – YYYY-MM-DD` (not the form of the other
-  Open3D repos), and no `## In development` section.
+- `CHANGELOG.md` has `## In development` at the top, for what is not released yet, then a section per
+  version, headed `## X.Y.Z – YYYY-MM-DD` (not the form of the other Open3D repos).
 - `powershell -ExecutionPolicy Bypass -File opengaussian\package.ps1 -BuildDir build -OutDir dist` refuses
   uncommitted changes and an exe that is not `OG_VERSION`, runs `cmake --install` into a staging folder,
   checks it (exe version, nvJPEG, licences, only the `en` and `es` languages) and writes
@@ -47,6 +50,15 @@ as a change that makes it old. It is our file: the root `README.md`, `AGENTS.md`
 - The code keeps upstream's style and is never reformatted. The settings files the other Open3D repos
   share (`.editorconfig`, the common `.gitattributes`, `ruff.toml`) are left out on purpose; upstream's
   `.gitignore` and `.gitattributes` are not edited (this file is tracked although `.gitignore` lists it).
+- The language is the one every Open3D app shares, in `settings.json` (`%APPDATA%\Open3D`, or the folder
+  `OPEN3D_SETTINGS_DIR` names): upstream's `loadLanguagePreference` and `saveLanguagePreference` read and
+  write it. At start `opengaussian::takeStartLanguage` (from `gui_manager.cpp`) takes its preference; with
+  none, a Spanish in `preferences.json` is carried over once (`language_shared`), and otherwise Windows
+  decides: Spanish if it is Spanish, else English. A saved English is not carried over: upstream saves it
+  when its start screen is closed and when preferences are reset. The start screen's picker shows while
+  there is no preference, and closing the screen (which also happens by itself when a dialog opens) writes
+  nothing. That picker and Edit > Preferences > General > Language write the file and change at once; a
+  write that fails is said in a toast.
 - Accounts, the online Gallery and the portal bug report are off through `PORTAL_ENABLED = False` (our
   switches); their code stays in the tree, and their interface parts are hidden in the `.rml` files.
 
