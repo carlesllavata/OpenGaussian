@@ -571,6 +571,251 @@ bool read_file(const std::filesystem::path& path, std::optional<std::string>* co
     return true;
 }
 
+namespace fs = std::filesystem;
+
+// Whether something has the name `path`: a folder, a file or a link. When that cannot be told, it counts
+// as there, so that it is never touched.
+bool taken(const fs::path& path)
+{
+    std::error_code failure;
+    return fs::symlink_status(path, failure).type() != fs::file_type::not_found;
+}
+
+// Whether `path` is `folder` or inside it, comparing their absolute forms part by part.
+bool inside(const fs::path& path, const fs::path& folder)
+{
+    std::error_code failure;
+    const fs::path whole = fs::absolute(path, failure).lexically_normal();
+    const fs::path base = fs::absolute(folder, failure).lexically_normal();
+    auto part = whole.begin();
+    for (auto base_part = base.begin(); base_part != base.end(); ++base_part)
+    {
+        if (base_part->empty())
+            continue;
+        if (part == whole.end() || *part != *base_part)
+            return false;
+        ++part;
+    }
+    return true;
+}
+
+std::string couldnt_write(const fs::path& path, const std::string& why)
+{
+    return "couldn't write " + display(path) + " (" + why + ")";
+}
+
+// A new, empty folder of its own in `dir`, named after `name`, for carry_over to copy into.
+bool new_folder(const fs::path& dir, const fs::path& name, fs::path* folder, std::string* error)
+{
+#ifdef _WIN32
+    const std::string stamp = std::to_string(GetCurrentProcessId()) + "-" + std::to_string(GetTickCount64());
+#else
+    const std::string stamp = "0";
+#endif
+    for (int attempt = 0; attempt < 100; ++attempt)
+    {
+        fs::path candidate = dir / name;
+        candidate += ".carry-" + stamp + "-" + std::to_string(attempt) + ".tmp";
+        std::error_code failure;
+        if (fs::create_directory(candidate, failure))
+        {
+            *folder = candidate;
+            return true;
+        }
+        if (failure)
+            return fail(error, "couldn't create a folder in " + display(dir) + " (" + failure.message() + ")");
+    }
+    return fail(error, "couldn't create a folder in " + display(dir) + " (every name tried is taken)");
+}
+
+// Gives the finished copy its name, `new_dir`. While nothing else has that name it tries a few times:
+// another program, such as an antivirus, may hold the copy for a moment.
+bool put_in_place(const fs::path& temporary, const fs::path& new_dir, std::string* error)
+{
+    std::string last;
+    for (int attempt = 0; attempt < 10; ++attempt)
+    {
+        if (taken(new_dir))
+            return fail(error, display(new_dir) + " appeared while the copy was made");
+#ifdef _WIN32
+        if (attempt > 0)
+            Sleep(50);
+        // Without MOVEFILE_REPLACE_EXISTING: nothing that has the name new_dir is ever replaced.
+        if (MoveFileExW(temporary.c_str(), new_dir.c_str(), MOVEFILE_WRITE_THROUGH))
+            return true;
+        last = std::system_category().message(static_cast<int>(GetLastError()));
+#else
+        std::error_code failure;
+        fs::rename(temporary, new_dir, failure);
+        if (!failure)
+            return true;
+        last = failure.message();
+#endif
+    }
+    return fail(error, "couldn't rename " + display(temporary) + " to " + display(new_dir) + " (" + last + ")");
+}
+
+// What copying one file came to.
+enum class Step
+{
+    Copied,
+    // The file cannot be read: it is left out.
+    LeftOut,
+    // Something cannot be written: the copy stops.
+    Stop,
+};
+
+// Copies the file `from` into the new file `to`, with its contents and the time it was last changed.
+// LeftOut when `from` cannot be read, with why in `why`; then `to` is not left behind. Stop when `to`
+// cannot be written. `from` is opened as other programs may still use it.
+Step copy_one_file(const fs::path& from, const fs::path& to, std::string* why)
+{
+#ifdef _WIN32
+    const auto message = [](DWORD code) { return std::system_category().message(static_cast<int>(code)); };
+    const HANDLE source = CreateFileW(from.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                                      nullptr, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
+    if (source == INVALID_HANDLE_VALUE)
+    {
+        *why = message(GetLastError());
+        return Step::LeftOut;
+    }
+    FILETIME changed{};
+    const bool has_time = GetFileTime(source, nullptr, nullptr, &changed) != 0;
+    const HANDLE target = CreateFileW(to.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (target == INVALID_HANDLE_VALUE)
+    {
+        *why = couldnt_write(to, message(GetLastError()));
+        CloseHandle(source);
+        return Step::Stop;
+    }
+    std::vector<char> buffer(1 << 16);
+    Step step = Step::Copied;
+    for (;;)
+    {
+        DWORD read = 0;
+        if (!ReadFile(source, buffer.data(), static_cast<DWORD>(buffer.size()), &read, nullptr))
+        {
+            *why = message(GetLastError());
+            step = Step::LeftOut;
+            break;
+        }
+        if (read == 0)
+            break;
+        DWORD written = 0;
+        if (!WriteFile(target, buffer.data(), read, &written, nullptr) || written != read)
+        {
+            *why = couldnt_write(to, message(GetLastError()));
+            step = Step::Stop;
+            break;
+        }
+    }
+    if (step == Step::Copied)
+    {
+        if (has_time)
+            SetFileTime(target, nullptr, nullptr, &changed);
+        if (!FlushFileBuffers(target))
+        {
+            *why = couldnt_write(to, message(GetLastError()));
+            step = Step::Stop;
+        }
+    }
+    CloseHandle(target);
+    CloseHandle(source);
+    if (step == Step::LeftOut)
+        DeleteFileW(to.c_str());
+    return step;
+#else
+    std::optional<std::string> content;
+    if (!read_file(from, &content) || !content)
+    {
+        *why = "it cannot be read";
+        return Step::LeftOut;
+    }
+    std::error_code failure;
+    if (taken(to))
+    {
+        *why = couldnt_write(to, "it is there already");
+        return Step::Stop;
+    }
+    std::ofstream file(to, std::ios::binary);
+    file.write(content->data(), static_cast<std::streamsize>(content->size()));
+    if (!file.flush())
+    {
+        *why = couldnt_write(to, "the write failed");
+        return Step::Stop;
+    }
+    file.close();
+    fs::last_write_time(to, fs::last_write_time(from, failure), failure);
+    return Step::Copied;
+#endif
+}
+
+// The files carry_over has copied so far, and what it left out.
+struct Copying
+{
+    std::size_t files = 0;
+    std::vector<std::pair<fs::path, std::string>> left_out;
+};
+
+// Copies what the folder `from` holds into the empty folder `to`; `inside_old` is the path of `from`
+// inside the old folder. False when the copy must stop (the old folder itself cannot be read, or
+// something cannot be written), with why in `error`.
+bool copy_tree(const fs::path& from, const fs::path& to, const fs::path& inside_old, Copying* copying, std::string* error)
+{
+    std::error_code failure;
+    fs::directory_iterator entry(from, failure);
+    if (failure)
+    {
+        if (inside_old.empty())
+            return fail(error, "couldn't read " + display(from) + " (" + failure.message() + ")");
+        copying->left_out.emplace_back(inside_old, failure.message());
+        return true;
+    }
+    const fs::directory_iterator end;
+    while (entry != end)
+    {
+        const fs::path name = entry->path().filename();
+        const fs::path path = inside_old / name;
+        const fs::path target = to / name;
+        std::error_code kind_failure;
+        const fs::file_type kind = entry->symlink_status(kind_failure).type();
+        if (kind_failure)
+            copying->left_out.emplace_back(path, kind_failure.message());
+        else if (kind == fs::file_type::directory)
+        {
+            std::error_code made;
+            if (!fs::create_directory(target, made))
+                return fail(error, couldnt_write(target, made ? made.message() : std::string("it is there already")));
+            if (!copy_tree(entry->path(), target, path, copying, error))
+                return false;
+        }
+        else if (kind == fs::file_type::regular)
+        {
+            std::string why;
+            switch (copy_one_file(entry->path(), target, &why))
+            {
+            case Step::Copied:
+                ++copying->files;
+                break;
+            case Step::LeftOut:
+                copying->left_out.emplace_back(path, why);
+                break;
+            case Step::Stop:
+                return fail(error, why);
+            }
+        }
+        else
+            copying->left_out.emplace_back(path, "not a plain file or folder, so not copied");
+        entry.increment(failure);
+        if (failure)
+        {
+            copying->left_out.emplace_back(inside_old, failure.message());
+            break;
+        }
+    }
+    return true;
+}
+
 } // namespace
 
 std::string_view code(Language language)
@@ -686,6 +931,79 @@ Language language_for_windows(std::uint16_t langid)
     constexpr std::uint16_t kPrimaryLanguage = 0x03FF;
     constexpr std::uint16_t kLangSpanish = 0x0A;
     return (langid & kPrimaryLanguage) == kLangSpanish ? Language::Spanish : Language::English;
+}
+
+std::optional<std::filesystem::path> data_dir()
+{
+    return data_dir_from(environment(kDataDirVariable), environment("LOCALAPPDATA"));
+}
+
+std::optional<std::filesystem::path> data_dir_from(const std::optional<std::filesystem::path>& variable,
+                                                   const std::optional<std::filesystem::path>& localappdata)
+{
+    // The same rule as settings_dir_from.
+    return settings_dir_from(variable, localappdata);
+}
+
+std::optional<std::filesystem::path> app_settings_dir(const std::filesystem::path& app)
+{
+    if (const auto dir = settings_dir())
+        return *dir / app;
+    return std::nullopt;
+}
+
+std::optional<std::filesystem::path> app_data_dir(const std::filesystem::path& app)
+{
+    if (const auto dir = data_dir())
+        return *dir / app;
+    return std::nullopt;
+}
+
+CarryOver carry_over(const std::filesystem::path& old_dir, const std::filesystem::path& new_dir)
+{
+    CarryOver done;
+    std::error_code failure;
+    if (taken(new_dir) || !std::filesystem::is_directory(old_dir, failure))
+        return done;
+    done.kind = CarryOver::Kind::Failed;
+    if (inside(new_dir, old_dir))
+    {
+        done.reason = display(new_dir) + " is inside " + display(old_dir);
+        return done;
+    }
+    const std::filesystem::path name = new_dir.filename();
+    if (name.empty())
+    {
+        done.reason = display(new_dir) + " cannot be a folder of its own";
+        return done;
+    }
+    std::filesystem::path parent = new_dir.parent_path();
+    if (parent.empty())
+        parent = ".";
+    std::filesystem::create_directories(parent, failure);
+    if (failure || !std::filesystem::is_directory(parent, failure))
+    {
+        done.reason = "couldn't create a folder in " + display(parent) + (failure ? " (" + failure.message() + ")" : std::string());
+        return done;
+    }
+    std::filesystem::path temporary;
+    if (!new_folder(parent, name, &temporary, &done.reason))
+        return done;
+    Copying copying;
+    if (copy_tree(old_dir, temporary, std::filesystem::path(), &copying, &done.reason) &&
+        put_in_place(temporary, new_dir, &done.reason))
+    {
+        done.kind = CarryOver::Kind::Copied;
+        done.files = copying.files;
+        done.left_out = std::move(copying.left_out);
+        done.reason.clear();
+        return done;
+    }
+    std::filesystem::remove_all(temporary, failure);
+    // Another start of the same app may have put its own copy in place meanwhile.
+    if (taken(new_dir))
+        return CarryOver{};
+    return done;
 }
 
 } // namespace open3d_settings
